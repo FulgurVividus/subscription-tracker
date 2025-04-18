@@ -4,13 +4,24 @@ import userRouter from "./routes/user.routes.js";
 import authRouter from "./routes/auth.routes.js";
 import subscriptionRouter from "./routes/subscription.routes.js";
 import connectToDatabase from "./database/mongodb.js";
+import errorMiddleware from "./middlewares/error.middleware.js";
+import cookieParser from "cookie-parser";
 
 // initializing the app
 const app = express();
 
+// express built-in middlewares
+app.use(express.json()); // it allows to handle json data sent in requests or API calls
+app.use(express.urlencoded({ extended: false })); // helps to process the form data sent via HTML forms in a simple format
+app.use(cookieParser()); // reads cookies from incoming requests so the app could store use data
+
+// routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/subscriptions", subscriptionRouter);
+
+// custom global middleware
+app.use(errorMiddleware);
 
 // creating first route
 app.get("/", (req, res) => {
